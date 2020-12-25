@@ -7,9 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1v2cEZ_IxUVefq_DMX2IF91dBMXKPfic9
 """
 
-!pip install spacy
-!python -m spacy download en_core_web_md
-
 import spacy
 import pickle
 from sklearn import svm
@@ -59,9 +56,11 @@ clf_svm_wv.fit(train_x_word_vectors, train_y)
 clf_svm_wv_sq = svm.SVC(kernel='linear')
 clf_svm_wv_sq.fit(train_x_word_vectors_for_questions, train_sq_data)
 
-
+# Using Pickle to save the file
 cat_fit_dump = pickle.dumps( clf_svm_wv)
-print( cat_fit_dump )
+print( "pickle dump:", cat_fit_dump )
+# TODO: write this to file
+# TODO: read the file using: https://stackoverflow.com/a/35068080
 
 test_x = ["Can I get tested?"]
 test_docs = [nlp(text) for text in test_x]
