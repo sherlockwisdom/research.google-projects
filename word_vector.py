@@ -11,6 +11,8 @@ Original file is located at
 !python -m spacy download en_core_web_md
 
 import spacy
+import pickle
+from sklearn import svm
 
 nlp = spacy.load("en_core_web_md")
 
@@ -50,7 +52,6 @@ train_x_word_vectors = [x.vector for x in docs]
 docs = [nlp(text) for text in train_cat_data]
 train_x_word_vectors_for_questions = [x.vector for x in docs]
 
-from sklearn import svm
 clf_svm_wv = svm.SVC(kernel='linear')
 clf_svm_wv.fit(train_x_word_vectors, train_y)
 
@@ -58,7 +59,6 @@ clf_svm_wv.fit(train_x_word_vectors, train_y)
 clf_svm_wv_sq = svm.SVC(kernel='linear')
 clf_svm_wv_sq.fit(train_x_word_vectors_for_questions, train_sq_data)
 
-import pickle
 
 cat_fit_dump = pickle.dumps( clf_svm_wv)
 print( cat_fit_dump )
