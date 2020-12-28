@@ -10,9 +10,14 @@ soup = BeautifulSoup( website_text, 'html.parser' )
 # print( soup.prettify() )
 
 foundCounter = 0
-ps = soup.find_all('p')
-for i in range(len(ps)):
-	pAttrs = ps[i].get("class")
-	if pAttrs is not None and "list" in pAttrs:
-		foundCounter += 1
-		print( f"{foundCounter}: {ps[i].get_text()}")
+def extract_attr( attr ):
+	global foundCounter
+	props_attrs = soup.find_all( attr )
+	for i in range(len(props_attrs)):
+		pAttrs = props_attrs[i].get("class")
+		if pAttrs is not None and "list" in pAttrs:
+			foundCounter += 1
+			print( f"{foundCounter}: p|{props_attrs[i].get_text()}")
+
+for tag in ["p", "h2"]:
+	extract_attr( tag )
