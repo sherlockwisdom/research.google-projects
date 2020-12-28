@@ -11,7 +11,7 @@ foundCounter = 0
 
 data_file = open('data/1000_facts.csv', 'w')
 csvfile_writer = csv.writer(data_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-csvfile_writer.writerow(['type', 'text'])
+csvfile_writer.writerow(['text', 'type'])
 data_file.close()
 
 def write_to_csv_file(data):
