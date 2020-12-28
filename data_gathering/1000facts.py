@@ -9,13 +9,15 @@ from tqdm import tqdm
 
 foundCounter = 0
 
-data_file = open('data/1000_facts.csv', 'w')
+DATA_FILENAME = "data/dataset.csv"
+
+data_file = open(DATA_FILENAME, 'w')
 csvfile_writer = csv.writer(data_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 csvfile_writer.writerow(['text', 'type'])
 data_file.close()
 
 def write_to_csv_file(data):
-    with open('data/1000_facts.csv', mode='a+') as csvfile:
+    with open(DATA_FILENAME, mode='a+') as csvfile:
         csvfile_writer = csv.writer(
             csvfile,
             delimiter=',',
@@ -24,7 +26,7 @@ def write_to_csv_file(data):
         csvfile_writer.writerow([data, 'facts'])
 
 
-def extract_attr(attr):
+def extract_attr(soup, attr):
     global foundCounter
 
     props_attrs = soup.find_all(attr)
@@ -41,7 +43,7 @@ website_text = website.text
 
 soup = BeautifulSoup(website_text, 'html.parser')
 for tag in ["p", "h2"]:
-    extract_attr(tag)
+    extract_attr(soup, tag)
 
 for i in tqdm(range(1, 11), desc="Iterating through pages...."):
     website = requests.get(
@@ -51,4 +53,5 @@ for i in tqdm(range(1, 11), desc="Iterating through pages...."):
     soup = BeautifulSoup(website_text, 'html.parser')
     list_attr = ["p", "h2"] 
     for attr in list_attr:
-        extract_attr( attr )
+        extract_attr(soup, attr )
+
