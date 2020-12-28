@@ -3,10 +3,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-website = requests.get("https://www.thefactsite.com/1000-interesting-facts/")
-website_text = website.text
-
-soup = BeautifulSoup( website_text, 'html.parser' )
 # print( soup.prettify() )
 
 foundCounter = 0
@@ -19,5 +15,18 @@ def extract_attr( attr ):
 			foundCounter += 1
 			print( f"{foundCounter}: p|{props_attrs[i].get_text()}")
 
+
+website = requests.get(f"https://www.thefactsite.com/1000-interesting-facts/")
+website_text = website.text
+
+soup = BeautifulSoup( website_text, 'html.parser' )
 for tag in ["p", "h2"]:
 	extract_attr( tag )
+
+for i in range( 1, 11 ):
+	website = requests.get(f"https://www.thefactsite.com/1000-interesting-facts/{i}/")
+	website_text = website.text
+
+	soup = BeautifulSoup( website_text, 'html.parser' )
+	for tag in ["p", "h2"]:
+		extract_attr( tag )
