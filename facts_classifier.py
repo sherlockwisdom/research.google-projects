@@ -32,7 +32,8 @@ def get_training_data( csvfilename, col_training_data, col_training_data_labels 
     return {"data": training_data, "labels": training_data_labels}
 
 
-labelled_dataset = get_training_data("data_gathering/data/1000_facts.csv", "text", "type")
+DATASET_FILENAME = "data_gathering/data/dataset.csv"
+labelled_dataset = get_training_data(DATASET_FILENAME, "text", "type")
 
 nlp = spacy.load("en_core_web_md")
 
@@ -40,7 +41,8 @@ nlp = spacy.load("en_core_web_md")
 docs = [nlp(text) for text in labelled_dataset["data"]]
 data_word_vectors = [x.vector for x in docs]
 
-clf_svm_wv = svm.SVC(kernel='linear')
+# clf_svm_wv = svm.SVC(kernel='linear')
+clf_svm_wv = svm.SVC(kernel='rbf')
 clf_svm_wv.fit(data_word_vectors, labelled_dataset["labels"])
 
 '''
@@ -51,8 +53,8 @@ print( "pickle dump:", cat_fit_dump )
 # TODO: read the file using: https://stackoverflow.com/a/35068080
 '''
 
-test_input = [ "The Sun is star" ]
+test_input = [ "We can change the way we input the files" ]
 test_docs = [nlp(text) for text in test_input]
 test_input_vectors = [x.vector for x in test_docs]
 
-print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_x_word_vectors )}")
+print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
