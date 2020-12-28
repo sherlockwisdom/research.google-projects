@@ -56,5 +56,39 @@ print( "pickle dump:", cat_fit_dump )
 test_input = [ "We can change the way we input the files" ]
 test_docs = [nlp(text) for text in test_input]
 test_input_vectors = [x.vector for x in test_docs]
+print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
 
+test_input = [ "The Sun is a star" ]
+test_docs = [nlp(text) for text in test_input]
+test_input_vectors = [x.vector for x in test_docs]
+print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+
+test_input = [ "My neck hurts" ]
+test_docs = [nlp(text) for text in test_input]
+test_input_vectors = [x.vector for x in test_docs]
+print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+
+test_input = [ "I need to sleep" ]
+test_docs = [nlp(text) for text in test_input]
+test_input_vectors = [x.vector for x in test_docs]
+print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+
+test_input = [ "Tomorrow is Tuesday" ]
+test_docs = [nlp(text) for text in test_input]
+test_input_vectors = [x.vector for x in test_docs]
+print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+
+test_input = [ "This is my first day at work" ]
+test_docs = [nlp(text) for text in test_input]
+test_input_vectors = [x.vector for x in test_docs]
+print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+
+test_input = [ "The sky is blue" ]
+test_docs = [nlp(text) for text in test_input]
+test_input_vectors = [x.vector for x in test_docs]
+print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+
+test_input = [ "Studies have shown the Earth is spherical" ]
+test_docs = [nlp(text) for text in test_input]
+test_input_vectors = [x.vector for x in test_docs]
 print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
