@@ -34,9 +34,10 @@ def get_training_data( csvfilename, col_training_data, col_training_data_labels 
 
 
 def save_fit_data( fit_dump, filename ):
-    writefile = open( filename, "w")
+    writefile = open( filename, "wb")
     pickle.dump( fit_dump, writefile )
     writefile.close()
+    print(f">> Trained Data Saved: [{filename}]")
 
 def train( labelled_dataset ):
     nlp = spacy.load("en_core_web_md")
