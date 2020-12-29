@@ -81,7 +81,19 @@ if __name__ == "__main__":
             test_input = [ input_text ]
             test_docs = [nlp(text) for text in test_input]
             test_input_vectors = [x.vector for x in test_docs]
-            print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+
+            prediction = clf_svm_wv.predict( test_input_vectors )[0]
+            # print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+            print(f"(prediction)$ ({test_input})_ {prediction}")
+
+            save = input(f"Save? yes|no - [{fit_filename}]: ")
+            save = save.lower()
+
+            '''
+            TODO: make this happen
+            if save == "yes":
+                write_to_dataset( fit_filename, input_text, prediction )
+            '''
 
         except ValueError as valueError:
             print(valueError)
