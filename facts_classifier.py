@@ -46,7 +46,7 @@ def train( labelled_dataset ):
     data_word_vectors = [x.vector for x in docs]
 
     # clf_svm_wv = svm.SVC(kernel='linear')
-    clf_svm_wv = svm.SVC(kernel='rbf')
+    clf_svm_wv = svm.SVC(kernel='rbf', verbose=True)
     clf_svm_wv.fit(data_word_vectors, labelled_dataset["labels"])
 
     return clf_svm_wv
@@ -56,11 +56,22 @@ def load_fit_data( filename ):
 
     return pickle.load( readfile )
 
+def write_to_csv_file(filename, data):
+    with open(DATA_FILENAME, mode='a+') as csvfile:
+        csvfile_writer = csv.writer(
+            csvfile,
+            delimiter=',',
+            quotechar='"',
+            quoting=csv.QUOTE_NONNUMERIC)
+        csvfile_writer.writerow( data )
+        print("[+] File saved")
+
 if __name__ == "__main__":
     nlp = spacy.load("en_core_web_md")
+    DATASET_FILENAME = "data_gathering/data/dataset.csv"
+
     if sys.argv[1] == "--train":
         print("(training)$_ ")
-        DATASET_FILENAME = "data_gathering/data/dataset.csv"
 
         # acquire data
         labelled_dataset = get_training_data(DATASET_FILENAME, "text", "type")
@@ -69,12 +80,16 @@ if __name__ == "__main__":
         clf_svm_wv = train( labelled_dataset )
 
         # save file
-        save_fit_data( clf_svm_wv, "trained_savefiles/trained_facts_classifier.obj")
+        save_filename = argv[2]
+        if not save_filename:   
+            save_filename = "trained_savefiles/trained_facts_classifier.obj"
+        save_fit_data( clf_svm_wv, save_filename )
 
     elif sys.argv[1] == "--predict":
+        # TODO: This should be able to load the obj rather than just saving it [--load]
         try:
             input_text = sys.argv[2]
-            print(f"(predicting)$_ {input_text}")
+            # print(f"(predicting)$_ {input_text}")
 
             fit_filename = "trained_savefiles/trained_facts_classifier.obj"
             clf_svm_wv = load_fit_data( fit_filename )
@@ -88,6 +103,11 @@ if __name__ == "__main__":
 
             save = input(f">> Save? yes|no - [{fit_filename}]: ")
             save = save.lower()
+
+            if save == 'yes':
+                write_to_csv_file( DATA_FILENAME, [input_text, prediction] )
+            else:
+                print(">> exiting..")
 
             '''
             TODO: make this happen
