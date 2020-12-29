@@ -40,7 +40,6 @@ def save_fit_data( fit_dump, filename ):
     print(f">> Trained Data Saved: [{filename}]")
 
 def train( labelled_dataset ):
-    nlp = spacy.load("en_core_web_md")
 
     # training cat data
     docs = [nlp(text) for text in labelled_dataset["data"]]
@@ -53,11 +52,12 @@ def train( labelled_dataset ):
     return clf_svm_wv
 
 def load_fit_data( filename ):
-    readfile = open( filename, 'r')
+    readfile = open( filename, 'rb')
 
     return pickle.load( readfile )
 
 if __name__ == "__main__":
+    nlp = spacy.load("en_core_web_md")
     if sys.argv[1] == "--train":
         print("(training)$_ ")
         DATASET_FILENAME = "data_gathering/data/dataset.csv"
@@ -72,45 +72,13 @@ if __name__ == "__main__":
         save_fit_data( clf_svm_wv, "trained_savefiles/trained_facts_classifier.obj")
 
     elif sys.argv[1] == "--predict":
-        print("(predicting)$_ ")
         try:
-            clf_svm_wv = load_fit_data( "trained_savefiles/trained_facts_classifier.obj")
-            test_input = [ "We can change the way we input the files" ]
-            test_docs = [nlp(text) for text in test_input]
-            test_input_vectors = [x.vector for x in test_docs]
-            print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+            input_text = sys.argv[2]
+            print(f"(predicting)$_ {input_text}")
 
-            test_input = [ "The Sun is a star" ]
-            test_docs = [nlp(text) for text in test_input]
-            test_input_vectors = [x.vector for x in test_docs]
-            print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
-
-            test_input = [ "My neck hurts" ]
-            test_docs = [nlp(text) for text in test_input]
-            test_input_vectors = [x.vector for x in test_docs]
-            print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
-
-            test_input = [ "I need to sleep" ]
-            test_docs = [nlp(text) for text in test_input]
-            test_input_vectors = [x.vector for x in test_docs]
-            print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
-
-            test_input = [ "Tomorrow is Tuesday" ]
-            test_docs = [nlp(text) for text in test_input]
-            test_input_vectors = [x.vector for x in test_docs]
-            print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
-
-            test_input = [ "This is my first day at work" ]
-            test_docs = [nlp(text) for text in test_input]
-            test_input_vectors = [x.vector for x in test_docs]
-            print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
-
-            test_input = [ "The sky is blue" ]
-            test_docs = [nlp(text) for text in test_input]
-            test_input_vectors = [x.vector for x in test_docs]
-            print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
-
-            test_input = [ "Studies have shown the Earth is spherical" ]
+            fit_filename = "trained_savefiles/trained_facts_classifier.obj"
+            clf_svm_wv = load_fit_data( fit_filename )
+            test_input = [ input_text ]
             test_docs = [nlp(text) for text in test_input]
             test_input_vectors = [x.vector for x in test_docs]
             print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
@@ -118,6 +86,6 @@ if __name__ == "__main__":
         except ValueError as valueError:
             print(valueError)
     else:
-        print(">> Usage: --predict|--train")
+        print(">> Usage: --predict <input>|--train")
 
 
