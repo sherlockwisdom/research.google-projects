@@ -86,7 +86,7 @@ if __name__ == "__main__":
             # print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
             print(f"(prediction)$ ({test_input})_ {prediction}")
 
-            save = input(f"Save? yes|no - [{fit_filename}]: ")
+            save = input(f">> Save? yes|no - [{fit_filename}]: ")
             save = save.lower()
 
             '''
