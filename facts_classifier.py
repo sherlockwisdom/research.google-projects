@@ -35,7 +35,7 @@ def get_training_data( csvfilename, col_training_data, col_training_data_labels 
 
 def save_fit_data( fit_dump, filename ):
     writefile = open( filename, "w")
-    pickle.write( fit_dump, writefile )
+    pickle.dump( fit_dump, writefile )
     writefile.close()
 
 def train( labelled_dataset ):
