@@ -11,11 +11,6 @@ foundCounter = 0
 
 DATA_FILENAME = "data/dataset.csv"
 
-data_file = open(DATA_FILENAME, 'a+')
-csvfile_writer = csv.writer(data_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-csvfile_writer.writerow(['text', 'type'])
-data_file.close()
-
 def write_to_csv_file(data):
     with open(DATA_FILENAME, mode='a+') as csvfile:
         csvfile_writer = csv.writer(

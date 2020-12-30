@@ -26,6 +26,7 @@ def get_training_data( csvfilename, col_training_data, col_training_data_labels 
     for row in csvfile_reader:
         training_data.append( row[col_training_data] )
         training_data_labels.append( row[col_training_data_labels] )
+        line_counter += 1
 
     print(f"$ len(training_data):{len(training_data)}\n$ len(training_data_labels):{len(training_data_labels)}")
 
@@ -45,8 +46,9 @@ def train( labelled_dataset ):
     data_word_vectors = [x.vector for x in docs]
 
     # clf_svm_wv = svm.SVC(kernel='linear')
-    clf_svm_wv = svm.SVC(kernel='rbf', verbose=True)
+    clf_svm_wv = svm.SVC(kernel='rbf', verbose=True, break_ties=True)
     clf_svm_wv.fit(data_word_vectors, labelled_dataset["labels"])
+    print(f"\n>> Classes: { clf_svm_wv.classes_ }")
 
     return clf_svm_wv
 
