@@ -15,7 +15,6 @@ import pickle
 import sys
 from sklearn import svm
 
-
 def get_training_data( csvfilename, col_training_data, col_training_data_labels ):
     csvfile = open( csvfilename, "r" )
     csvfile_reader = csv.DictReader( csvfile, delimiter=',' )
@@ -34,7 +33,7 @@ def get_training_data( csvfilename, col_training_data, col_training_data_labels 
 
 
 def save_fit_data( fit_dump, filename ):
-    writefile = open( filename, "wb")
+    writefile = open( filename, "wb+")
     pickle.dump( fit_dump, writefile )
     writefile.close()
     print(f">> Trained Data Saved: [{filename}]")
@@ -57,7 +56,7 @@ def load_fit_data( filename ):
     return pickle.load( readfile )
 
 def write_to_csv_file(filename, data):
-    with open(DATA_FILENAME, mode='a+') as csvfile:
+    with open(filename, mode='a+') as csvfile:
         csvfile_writer = csv.writer(
             csvfile,
             delimiter=',',
@@ -70,7 +69,10 @@ if __name__ == "__main__":
     nlp = spacy.load("en_core_web_md")
     DATASET_FILENAME = "data_gathering/data/dataset.csv"
 
-    if sys.argv[1] == "--train":
+    if len(sys.argv) < 2:
+        print(">> Usage: --predict <input>|--train")
+
+    elif sys.argv[1] == "--train":
         print("(training)$_ ")
 
         # acquire data
@@ -80,40 +82,67 @@ if __name__ == "__main__":
         clf_svm_wv = train( labelled_dataset )
 
         # save file
-        save_filename = argv[2]
-        if not save_filename:   
-            save_filename = "trained_savefiles/trained_facts_classifier.obj"
+        save_filename = "trained_savefiles/trained_facts_classifier.obj"
+        try:
+            save_filename = sys.argv[2]
+        except IndexError:
+            print(f">> Resulting save to default file: {save_filename}")
+        else:
+            print(f">> Saving to: {save_filename}")
+
         save_fit_data( clf_svm_wv, save_filename )
 
     elif sys.argv[1] == "--predict":
         # TODO: This should be able to load the obj rather than just saving it [--load]
         try:
-            input_text = sys.argv[2]
-            # print(f"(predicting)$_ {input_text}")
+            predict_only = False
+            try:
+                input_text = sys.argv[2]
+                predict_only = True
+            except IndexError:
+                input_text = input(f"(prediction|input)$_ ")
+                if input_text == "exit()":
+                    sys.exit(">> Leaving program")
 
             fit_filename = "trained_savefiles/trained_facts_classifier.obj"
             clf_svm_wv = load_fit_data( fit_filename )
-            test_input = [ input_text ]
-            test_docs = [nlp(text) for text in test_input]
-            test_input_vectors = [x.vector for x in test_docs]
 
-            prediction = clf_svm_wv.predict( test_input_vectors )[0]
-            # print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
-            print(f"(prediction)$ ({test_input})_ {prediction}")
 
-            save = input(f">> Save? yes|no - [{fit_filename}]: ")
-            save = save.lower()
+            while 1:
+                if input_text == "":
+                    input_text = input(f"(prediction|input)$_ ")
+                    if input_text == "exit()":
+                        sys.exit(">> Leaving program")
+                    continue
+                test_input = [ input_text ]
+                test_docs = [nlp(text) for text in test_input]
+                test_input_vectors = [x.vector for x in test_docs]
 
-            if save == 'yes':
-                write_to_csv_file( DATA_FILENAME, [input_text, prediction] )
-            else:
-                print(">> exiting..")
+                prediction = clf_svm_wv.predict( test_input_vectors )[0]
+                # print(f"(prediction)$ ({test_input})_ {clf_svm_wv.predict( test_input_vectors )}")
+                print(f"(prediction)$ ({test_input})_ {prediction}")
 
-            '''
-            TODO: make this happen
-            if save == "yes":
-                write_to_dataset( fit_filename, input_text, prediction )
-            '''
+                save = input(f">> Save? yes|no|switch - [{fit_filename}]: ")
+                save = save.lower()
+
+                if save == 'yes':
+                    write_to_csv_file( DATASET_FILENAME, [input_text, prediction] )
+                if save == 'switch':
+                    write_to_csv_file( DATASET_FILENAME, [input_text, input(f"--> prediction? ")] )
+
+                if predict_only:
+                    break
+                else:
+                    input_text = input(f"\n(prediction|input)$_ ")
+
+                if input_text == "exit()":
+                    sys.exit(">> Leaving program")
+                    break
+                '''
+                TODO: make this happen
+                if save == "yes":
+                    write_to_dataset( fit_filename, input_text, prediction )
+                '''
 
         except ValueError as valueError:
             print(valueError)
