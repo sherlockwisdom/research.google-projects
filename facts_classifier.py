@@ -45,7 +45,7 @@ def train( labelled_dataset ):
     data_word_vectors = [x.vector for x in docs]
 
     # clf_svm_wv = svm.SVC(kernel='linear')
-    clf_svm_wv = svm.SVC(kernel='rbf', verbose=True, break_ties=True)
+    clf_svm_wv = svm.SVC(kernel='rbf', verbose=True)
     clf_svm_wv.fit(data_word_vectors, labelled_dataset["labels"])
     print(f"\n>> Classes: { clf_svm_wv.classes_ }")
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         print(">> Usage: --predict <input>|--train")
 
     elif sys.argv[1] == "--train":
-        nlp = spacy.load("en_core_web_md")
+        nlp = spacy.load("en_core_web_lg")
         print("(training)$_ ")
 
         # acquire data
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         save_fit_data( clf_svm_wv, save_filename )
 
     elif sys.argv[1] == "--predict":
-        nlp = spacy.load("en_core_web_md")
+        nlp = spacy.load("en_core_web_lg")
         # TODO: This should be able to load the obj rather than just saving it [--load]
         try:
             predict_only = False
