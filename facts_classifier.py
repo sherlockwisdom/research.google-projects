@@ -42,15 +42,35 @@ def save_fit_data( fit_dump, filename ):
 
 
 def train( labelled_dataset ):
-
     # training cat data
+    print(">> Vectorizing dataset...")
     docs = [nlp(text) for text in labelled_dataset["data"]]
     data_word_vectors = [x.vector for x in docs]
 
+    kernel = input(f">> Choose your kernel!\n1. linear(V)\n2. rbf(V)\n3. linear\n4. rbf\n(kernel)$_ ")
+    verbose = True
+    if not kernel:
+        kernel = "1" 
+        print(f">> Defaulting kernel to {kernel}")
     # clf_svm_wv = svm.SVC(kernel='linear')
-    clf_svm_wv = svm.SVC(kernel='rbf', verbose=True)
+    if kernel == "1":
+        kernel = "linear"
+        print(f">> Kernel = {kernel} with verbose")
+    elif kernel == "2":
+        kernel = "rbf"
+        print(f">> Kernel = {kernel} with verbose")
+    elif kernel == "3":
+        kernel = "linear"
+        verbose = False
+        print(f">> Kernel = {kernel} no verbose")
+    elif kernel == "4":
+        kernel = "rbf"
+        verbose = False
+        print(f">> Kernel = {kernel} no verbose")
+
+    clf_svm_wv = svm.SVC(kernel=kernel, verbose=verbose)
     clf_svm_wv.fit(data_word_vectors, labelled_dataset["labels"])
-    print(f"\n>> Classes: { clf_svm_wv.classes_ }")
+    print(f"\n>> Kernel: {kernel}\nClasses: { clf_svm_wv.classes_ }")
 
 
     # evaluation
@@ -109,8 +129,13 @@ def evaluate( clf_svm_wv, training_filename ):
     for _count in counted_cases:
         print(f"[counted|{_count}]: {counted_cases[_count]}")
 
+    av_score_ranking = 0
     for _score in score:
-        print(f"[score|{_score}]: {score[_score]} ... {round((score[_score]/counted_cases[_score]) * 100, 2)}%")
+        percentage = (score[_score]/counted_cases[_score]) * 100
+        print(f"[score|{_score}]: {score[_score]} ... {round(percentage, 2)}%")
+        av_score_ranking += percentage
+
+    print(f"[=] Average score ranking >> {round(av_score_ranking/len(score.keys()), 2)}%")
 
 
 if __name__ == "__main__":
@@ -120,10 +145,12 @@ if __name__ == "__main__":
         print(">> Usage: --predict <input>|--train")
 
     elif sys.argv[1] == "--train":
-        nlp = spacy.load("en_core_web_lg")
+        # nlp = spacy.load("en_core_web_lg")
+        nlp = spacy.load("en_core_web_md")
         print("(training)$_ ")
 
         # acquire data
+        print(">> Getting training data....")
         labelled_dataset = get_training_data(DATASET_FILENAME, "text", "type")
 
         # train
