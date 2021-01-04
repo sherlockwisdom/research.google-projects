@@ -41,7 +41,7 @@ def save_fit_data( fit_dump, filename ):
     print(f">> Trained Data Saved: [{filename}]")
 
 
-def train( labelled_dataset ):
+def train( labelled_dataset, nlp ):
     # training cat data
     print(">> Vectorizing dataset...")
     docs = [nlp(text) for text in labelled_dataset["data"]]
@@ -145,8 +145,8 @@ if __name__ == "__main__":
         print(">> Usage: --predict <input>|--train")
 
     elif sys.argv[1] == "--train":
-        # nlp = spacy.load("en_core_web_lg")
-        nlp = spacy.load("en_core_web_md")
+        nlp = spacy.load("en_core_web_lg")
+        # nlp = spacy.load("en_core_web_md")
         print("(training)$_ ")
 
         # acquire data
@@ -154,7 +154,7 @@ if __name__ == "__main__":
         labelled_dataset = get_training_data(DATASET_FILENAME, "text", "type")
 
         # train
-        clf_svm_wv = train( labelled_dataset )
+        clf_svm_wv = train( labelled_dataset, nlp )
 
         # save file
         save_filename = "trained_savefiles/trained_facts_classifier.obj"
