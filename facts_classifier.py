@@ -14,6 +14,8 @@ import pickle
 import sys
 from sklearn import svm
 
+
+
 def get_training_data( csvfilename, col_training_data, col_training_data_labels ):
     csvfile = open( csvfilename, "r" )
     csvfile_reader = csv.DictReader( csvfile, delimiter=',' )
@@ -38,6 +40,7 @@ def save_fit_data( fit_dump, filename ):
     writefile.close()
     print(f">> Trained Data Saved: [{filename}]")
 
+
 def train( labelled_dataset ):
 
     # training cat data
@@ -48,6 +51,11 @@ def train( labelled_dataset ):
     clf_svm_wv = svm.SVC(kernel='rbf', verbose=True)
     clf_svm_wv.fit(data_word_vectors, labelled_dataset["labels"])
     print(f"\n>> Classes: { clf_svm_wv.classes_ }")
+
+
+    # evaluation
+    print(">> Done training, evaluating...")
+    evaluate( clf_svm_wv, "data_gathering/data/training.csv")
 
     return clf_svm_wv
 
@@ -65,6 +73,45 @@ def write_to_csv_file(filename, data):
             quoting=csv.QUOTE_NONNUMERIC)
         csvfile_writer.writerow( data )
         print("[+] File saved")
+
+
+def evaluate( clf_svm_wv, training_filename ):
+    csvfile = open( training_filename, "r" )
+    csvfile_reader = csv.DictReader( csvfile, delimiter=',' )
+
+    line_counter = 0
+    evaluation_data = []
+    evaluation_data_labels = []
+
+    # nlp = spacy.load("en_core_web_lg")
+    # fit_filename = "trained_savefiles/trained_facts_classifier.obj"
+    # clf_svm_wv = load_fit_data( fit_filename )
+
+    score = {}
+    counted_cases = {}
+    for _class in clf_svm_wv.classes_:
+        score[_class] = 0
+        counted_cases[_class] = 0
+
+    for row in csvfile_reader:
+        line_counter += 1
+
+        test_input = [row['text']]
+        test_docs = [nlp(text) for text in test_input]
+        test_input_vectors = [x.vector for x in test_docs]
+
+        prediction = clf_svm_wv.predict( test_input_vectors )[0]
+        if prediction == row['type']:
+            score[row['type']] += 1
+        counted_cases[row['type']] += 1
+
+    print("\n>> Evaluation Score...")
+    for _count in counted_cases:
+        print(f"[counted|{_count}]: {counted_cases[_count]}")
+
+    for _score in score:
+        print(f"[score|{_score}]: {score[_score]} ... {round((score[_score]/counted_cases[_score]) * 100, 2)}%")
+
 
 if __name__ == "__main__":
     DATASET_FILENAME = "data_gathering/data/dataset.csv"
