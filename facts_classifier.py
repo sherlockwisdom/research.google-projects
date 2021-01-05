@@ -55,10 +55,17 @@ def train( labelled_dataset, nlp ):
 
     # splitting data for evaluation
     data_train, data_evaluate, data_label_train, data_label_evaluate = train_test_split(arr_data, arr_data_label, stratify=data_label)
-    print(f">> data_train: {data_train.flatten()}")
+    print(f">> data_train_len: {len(data_train)}")
     
     # TODO: Flatten 2D array to 1D here before going further
-    docs_dt = [nlp(text) for text in data_train.flatten()]
+    data = data_train.flatten()
+    '''
+    for text in data:
+        text = str(text)
+        print(f">>TYPEOF_TEXT: {type(text)}")
+        print(f">>TEXT: {nlp(text)}")
+    '''
+    docs_dt = [nlp(str(text)) for text in data]
 
     # docs = [nlp(text) for text in labelled_dataset["data"]]
     dt_wv = [x.vector for x in docs_dt]
