@@ -57,20 +57,6 @@ def train( labelled_dataset, nlp ):
     data_train, data_evaluate, data_label_train, data_label_evaluate = train_test_split(arr_data, arr_data_label, stratify=data_label)
     print(f">> data_train_len: {len(data_train)}")
     
-    # TODO: Flatten 2D array to 1D here before going further
-    data = data_train.flatten()
-    '''
-    for text in data:
-        text = str(text)
-        print(f">>TYPEOF_TEXT: {type(text)}")
-        print(f">>TEXT: {nlp(text)}")
-    '''
-    docs_dt = [nlp(str(text)) for text in data]
-
-    # docs = [nlp(text) for text in labelled_dataset["data"]]
-    dt_wv = [x.vector for x in docs_dt]
-
-    # model = LinearRegression().fit( data_train, data_evaluate )
     '''
     print(f"intercept_: {model.intercept_}")
     print(f"coef_: {model.coef_}")
@@ -99,6 +85,21 @@ def train( labelled_dataset, nlp ):
         verbose = False
         print(f">> Kernel = {kernel} no verbose")
 
+    # TODO: Flatten 2D array to 1D here before going further
+    data = data_train.flatten()
+    '''
+    for text in data:
+        text = str(text)
+        print(f">>TYPEOF_TEXT: {type(text)}")
+        print(f">>TEXT: {nlp(text)}")
+    '''
+    docs_dt = [nlp(str(text)) for text in data]
+
+    # docs = [nlp(text) for text in labelled_dataset["data"]]
+    dt_wv = [x.vector for x in docs_dt]
+
+    # model = LinearRegression().fit( data_train, data_evaluate )
+
     clf_svm_wv = svm.SVC(kernel=kernel, verbose=verbose)
     clf_svm_wv.fit(dt_wv, data_label_train.flatten())
     print(f"\n>> Kernel: {kernel}\nClasses: { clf_svm_wv.classes_ }")
@@ -108,6 +109,7 @@ def train( labelled_dataset, nlp ):
     print(">> Done training, evaluating...")
     evaluate( clf_svm_wv, "data_gathering/data/training.csv")
     '''
+    evaluate( clf_svm_wv, data_evaluate.flatten(), data_label_evaluate.flatten() )
 
     return clf_svm_wv
 
@@ -127,35 +129,22 @@ def write_to_csv_file(filename, data):
         print("[+] File saved")
 
 
-def evaluate( clf_svm_wv, training_filename ):
-    csvfile = open( training_filename, "r" )
-    csvfile_reader = csv.DictReader( csvfile, delimiter=',' )
-
-    line_counter = 0
-    evaluation_data = []
-    evaluation_data_labels = []
-
-    # nlp = spacy.load("en_core_web_lg")
-    # fit_filename = "trained_savefiles/trained_facts_classifier.obj"
-    # clf_svm_wv = load_fit_data( fit_filename )
-
+def evaluate( clf_svm_wv, data, label ):
     score = {}
     counted_cases = {}
     for _class in clf_svm_wv.classes_:
         score[_class] = 0
         counted_cases[_class] = 0
 
-    for row in csvfile_reader:
-        line_counter += 1
-
-        test_input = [row['text']]
+    for i in range(len(data)):
+        test_input = [str(data[i])]
         test_docs = [nlp(text) for text in test_input]
         test_input_vectors = [x.vector for x in test_docs]
 
         prediction = clf_svm_wv.predict( test_input_vectors )[0]
-        if prediction == row['type']:
-            score[row['type']] += 1
-        counted_cases[row['type']] += 1
+        if prediction == str(label[i]):
+            score[prediction] += 1
+        counted_cases[str(label[i])] += 1
 
     print("\n>> Evaluation Score...")
     for _count in counted_cases:
