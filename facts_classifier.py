@@ -43,9 +43,6 @@ def save_fit_data( fit_dump, filename ):
 
 def train( labelled_dataset, nlp ):
     # training cat data
-    print(">> Vectorizing dataset...")
-    docs = [nlp(text) for text in labelled_dataset["data"]]
-    data_word_vectors = [x.vector for x in docs]
 
     kernel = input(f">> Choose your kernel!\n1. linear(V)\n2. rbf(V)\n3. linear\n4. rbf\n(kernel)$_ ")
     verbose = True
@@ -67,6 +64,12 @@ def train( labelled_dataset, nlp ):
         kernel = "rbf"
         verbose = False
         print(f">> Kernel = {kernel} no verbose")
+
+    print(">> Vectorizing dataset...")
+    
+    # split the data before vectorizing it
+    docs = [nlp(text) for text in labelled_dataset["data"]]
+    data_word_vectors = [x.vector for x in docs]
 
     clf_svm_wv = svm.SVC(kernel=kernel, verbose=verbose)
     clf_svm_wv.fit(data_word_vectors, labelled_dataset["labels"])
