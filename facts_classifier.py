@@ -100,7 +100,7 @@ def train( labelled_dataset, nlp ):
         print(f">> Kernel = {kernel} no verbose")
 
     clf_svm_wv = svm.SVC(kernel=kernel, verbose=verbose)
-    clf_svm_wv.fit(dt_wv, data_label)
+    clf_svm_wv.fit(dt_wv, data_label_train.flatten())
     print(f"\n>> Kernel: {kernel}\nClasses: { clf_svm_wv.classes_ }")
 
     # evaluation
