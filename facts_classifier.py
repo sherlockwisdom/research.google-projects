@@ -15,6 +15,7 @@ import sys
 from sklearn import svm
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+import numpy as np
 
 
 def get_training_data( csvfilename, col_training_data, col_training_data_labels ):
@@ -47,16 +48,28 @@ def train( labelled_dataset, nlp ):
     # split the data before vectorizing it
     data = labelled_dataset["data"]
     data_label = labelled_dataset["labels"]
-    data_train, data_evaluate, data_label_train, data_label_evaluate = train_test_split(data, data_label, stratify=data_label)
-    
-    docs = [nlp(text) for text in labelled_dataset["data"]]
-    data_word_vectors = [x.vector for x in docs]
 
-    model = LinearRegression().git( data_train, data_evaluate )
+    arr_data = np.array( data ).reshape(-1, 1);
+    arr_data_label = np.array( data_label )
+    print(f">> Done converting\n>> Splitting data for split testing")
+
+    # splitting data for evaluation
+    data_train, data_evaluate, data_label_train, data_label_evaluate = train_test_split(arr_data, arr_data_label, stratify=data_label)
+    print(f">> data_train: {data_train.flatten()}")
+    
+    # TODO: Flatten 2D array to 1D here before going further
+    docs_dt = [nlp(text) for text in data_train.flatten()]
+
+    # docs = [nlp(text) for text in labelled_dataset["data"]]
+    dt_wv = [x.vector for x in docs_dt]
+
+    # model = LinearRegression().fit( data_train, data_evaluate )
+    '''
     print(f"intercept_: {model.intercept_}")
     print(f"coef_: {model.coef_}")
     print(f"model score - training: {model.score(data_train, data_evaluate)}")
     print(f"model score - test: {model.score(data_evaluate, data_label_evaluate)}")
+    '''
 
     kernel = input(f">> Choose your kernel!\n1. linear(V)\n2. rbf(V)\n3. linear\n4. rbf\n(kernel)$_ ")
     verbose = True
@@ -80,13 +93,14 @@ def train( labelled_dataset, nlp ):
         print(f">> Kernel = {kernel} no verbose")
 
     clf_svm_wv = svm.SVC(kernel=kernel, verbose=verbose)
-    clf_svm_wv.fit(data_word_vectors, labelled_dataset["labels"])
+    clf_svm_wv.fit(dt_wv, data_label)
     print(f"\n>> Kernel: {kernel}\nClasses: { clf_svm_wv.classes_ }")
 
-
     # evaluation
+    '''
     print(">> Done training, evaluating...")
     evaluate( clf_svm_wv, "data_gathering/data/training.csv")
+    '''
 
     return clf_svm_wv
 
