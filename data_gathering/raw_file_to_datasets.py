@@ -10,7 +10,7 @@ def write_to_csv_file(data):
             delimiter=',',
             quotechar='"',
             quoting=csv.QUOTE_NONNUMERIC)
-        csvfile_writer.writerow([data, 'statements'])
+        csvfile_writer.writerow([data, 'facts'])
 
 
 
@@ -21,5 +21,5 @@ Lines = csvfile.readlines()
 
 
 for line in Lines:
-    if not line:
+    if line:
         write_to_csv_file( line )

@@ -13,7 +13,8 @@ import csv
 import pickle
 import sys
 from sklearn import svm
-
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 
 
 def get_training_data( csvfilename, col_training_data, col_training_data_labels ):
@@ -42,7 +43,20 @@ def save_fit_data( fit_dump, filename ):
 
 
 def train( labelled_dataset, nlp ):
-    # training cat data
+    print(">> Vectorizing dataset...")
+    # split the data before vectorizing it
+    data = labelled_dataset["data"]
+    data_label = labelled_dataset["labels"]
+    data_train, data_evaluate, data_label_train, data_label_evaluate = train_test_split(data, data_label, stratify=data_label)
+    
+    docs = [nlp(text) for text in labelled_dataset["data"]]
+    data_word_vectors = [x.vector for x in docs]
+
+    model = LinearRegression().git( data_train, data_evaluate )
+    print(f"intercept_: {model.intercept_}")
+    print(f"coef_: {model.coef_}")
+    print(f"model score - training: {model.score(data_train, data_evaluate)}")
+    print(f"model score - test: {model.score(data_evaluate, data_label_evaluate)}")
 
     kernel = input(f">> Choose your kernel!\n1. linear(V)\n2. rbf(V)\n3. linear\n4. rbf\n(kernel)$_ ")
     verbose = True
@@ -64,12 +78,6 @@ def train( labelled_dataset, nlp ):
         kernel = "rbf"
         verbose = False
         print(f">> Kernel = {kernel} no verbose")
-
-    print(">> Vectorizing dataset...")
-    
-    # split the data before vectorizing it
-    docs = [nlp(text) for text in labelled_dataset["data"]]
-    data_word_vectors = [x.vector for x in docs]
 
     clf_svm_wv = svm.SVC(kernel=kernel, verbose=verbose)
     clf_svm_wv.fit(data_word_vectors, labelled_dataset["labels"])
