@@ -72,18 +72,18 @@ def train( labelled_dataset, nlp ):
     # clf_svm_wv = svm.SVC(kernel='linear')
     if kernel == "1":
         kernel = "linear"
-        print(f">> Kernel = {kernel} with verbose")
+        print(f">> Selected Kernel = {kernel} with verbose")
     elif kernel == "2":
         kernel = "rbf"
-        print(f">> Kernel = {kernel} with verbose")
+        print(f">> Selected Kernel = {kernel} with verbose")
     elif kernel == "3":
         kernel = "linear"
         verbose = False
-        print(f">> Kernel = {kernel} no verbose")
+        print(f">> Selected Kernel = {kernel} no verbose")
     elif kernel == "4":
         kernel = "rbf"
         verbose = False
-        print(f">> Kernel = {kernel} no verbose")
+        print(f">> Selected Kernel = {kernel} no verbose")
 
     # TODO: Flatten 2D array to 1D here before going further
     data = data_train.flatten()
@@ -102,7 +102,7 @@ def train( labelled_dataset, nlp ):
 
     clf_svm_wv = svm.SVC(kernel=kernel, verbose=verbose)
     clf_svm_wv.fit(dt_wv, data_label_train.flatten())
-    print(f"\n>> Kernel: {kernel}\nClasses: { clf_svm_wv.classes_ }")
+    print(f"\n>> Kernel: {kernel}\n>> Classes: { clf_svm_wv.classes_ }")
 
     # evaluation
     '''
@@ -130,6 +130,7 @@ def write_to_csv_file(filename, data):
 
 
 def evaluate( clf_svm_wv, data, label ):
+    print("\n>> Evaluating Score...")
     score = {}
     counted_cases = {}
     for _class in clf_svm_wv.classes_:
@@ -146,7 +147,6 @@ def evaluate( clf_svm_wv, data, label ):
             score[prediction] += 1
         counted_cases[str(label[i])] += 1
 
-    print("\n>> Evaluation Score...")
     for _count in counted_cases:
         print(f"[counted|{_count}]: {counted_cases[_count]}")
 
