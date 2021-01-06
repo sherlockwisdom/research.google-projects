@@ -90,7 +90,11 @@ if __name__ == "__main__":
 
             prediction = clf_svm_wv.predict( test_input_vectors )[0]
             if prediction == "facts":
-                print(f"(prediction)$ ({test_input})_ |||||> {prediction}")
-                input(">> press ENTER to continue...")
+                print(f"\n(prediction)$ ({test_input})_ |||||> {prediction}")
+                correct = input(">> correct? [yes|no|ignore(i)]: ")
+                if correct == "no":
+                    write_to_csv_file( filename=DATASET_FILENAME, data=[sentences[i], input(f">> ENTER correct type({clf_svm_wv.classes_}): ")])
+                elif correct == "yes":
+                    write_to_csv_file(filename=DATASET_FILENAME, data=[sentences[i], prediction])
                 print("")
         print(">> Done. Bye...")
