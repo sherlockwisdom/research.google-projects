@@ -79,7 +79,7 @@ if __name__ == "__main__":
     if readfromfile == True:
         # TODO: determine filetype, for now going with CSV
         text = read_file( read_filename )
-        print(">> done readin document...")
+        print(">> done reading document...")
         sentences = get_sentences( text )
         print(">> done splitting sentences...")
 
@@ -89,7 +89,7 @@ if __name__ == "__main__":
             test_input_vectors = [x.vector for x in test_docs]
 
             prediction = clf_svm_wv.predict( test_input_vectors )[0]
-            if prediction == "facts":
+            if prediction == "facts" or prediction == "definition":
                 print(f"\n(prediction)$ ({test_input})_ |||||> {prediction}")
                 correct = input(">> correct? [yes|no|ignore(i)]: ")
                 if correct == "no":
